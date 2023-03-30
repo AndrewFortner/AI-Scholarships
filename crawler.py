@@ -165,6 +165,8 @@ class Crawler:
 
 
 	def __crawl(self, current_url):
+		if 'about' in current_url or 'news' in current_url or 'report' in current_url or 'ReturnUrl' in current_url:
+			return
 		if 'scholarship' in current_url:
 			open('scholarship-pages.txt', 'a').write(current_url + '\n')
 		if current_url[0] == ':':
@@ -276,6 +278,8 @@ class Crawler:
 		links = self.linkregex.findall(msg)
 		for link in links:
 			link = link.decode("utf-8", errors="ignore")
+			if 'shcolarship' in link:
+				open('scholarship-pages.txt', 'a').write(link + '\n')
 			logging.debug(f"Found : {link}")
 
 			if link.startswith('/'):

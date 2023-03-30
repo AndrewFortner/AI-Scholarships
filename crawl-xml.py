@@ -11,15 +11,17 @@ import os
 
 def crawl():
     c = 0
+    start = 25
     df = pd.read_csv('cleaned.csv')
     #Is there an infinite loop?? aws is taking forever to complete
     for index, row in df.iterrows():
-        if 'niaf' in row['Link']:
+        if 'niaf' in row['Link'] or 'scholarship' in row['Link']:
+            start-=1
             continue
         pr = os.fork()
         if pr == 0:
             output = []
-            crawl = crawler.Crawler(domain=row['Link'], num_workers=100)
+            crawl = crawler.Crawler(domain=row['Link'], num_workers=12, debug=True)
             output = crawl.run()
             if output:
                 return (index, output)
@@ -27,7 +29,8 @@ def crawl():
             print("Done with: ", row['Link'])
             exit()
         c+=1
-        if c > 6:
-            break
+        if c > 25:
+            os.wait()
+            c-=1
 
 crawl()
